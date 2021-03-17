@@ -1,5 +1,6 @@
 package com.example.anotacoesapp;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -12,45 +13,45 @@ import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+    private FloatingActionButton fab;
+    private AnotacaoPreferencias preferencias;
+    private EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+
+        editText = findViewById(R.id.editTextTextMultiLine);
+        preferencias = new AnotacaoPreferencias(getApplication());
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                //Validar se algo foi digitado
+                String textoRecuperado = editText.getText().toString();
+                if(textoRecuperado.equals("")){
+                    Snackbar.make(view, "Digita algum texto, caralho!!!", Snackbar.LENGTH_LONG).show();
+                } else {
+                    preferencias.salvarAnotacao(textoRecuperado);
+                    Snackbar.make(view, "Anotação salva com sucesso!", Snackbar.LENGTH_LONG).show();
+
+                }
             }
         });
+
+        //recuperar a anotação
+        String anotacaoRecuperada = preferencias.recuperarAnotacao();
+
+        editText.setText(anotacaoRecuperada);
+
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
